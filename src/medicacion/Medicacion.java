@@ -8,7 +8,13 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -78,7 +84,71 @@ public class Medicacion {
     } //de public void IniciaBaseDatos
     
  
+       
+        public static void IniciaRecetasBaseDatos(){
+        
+       
+        System.out.println("recorremos la BaseDatos db4Object, para visualizarla.");
+        ObjectContainer db = Db4oEmbedded.openFile(".\\src\\bd\\pacientesmedicamentos.db4o");
+                
+        DateFormat formatoSencillo = new SimpleDateFormat("dd/MM/yyyy");
+        
+           try {
+               Date fecha1 = formatoSencillo.parse("02/02/2024");
+                 Receta r1 = new Receta("R001","P001",fecha1);
+        
+                LinReceta lr1 = new LinReceta("R001",1,"M001",2,fecha1, null,"r1-Observac sin nada");
+                LinReceta lr2 = new LinReceta("R001",2,"M003",1,fecha1, fecha1,"r1-xxx");
+        
+                r1.addLinReceta(lr1);
+                r1.addLinReceta(lr2);
+                 
+                Date fecha2 = formatoSencillo.parse("05/01/2024");
+                Receta r2 = new Receta("R021","P121",fecha2);
+                
+                LinReceta lr3 = new LinReceta("R021",1,"M002",4,formatoSencillo.parse("10/01/2024"), formatoSencillo.parse("20/01/2024"),"r2-nada");
+                LinReceta lr4 = new LinReceta("R021",2,"M003",3,formatoSencillo.parse("05/01/2024"), null,"r2-xxx");
+                LinReceta lr5 = new LinReceta("R021",3,"M003",2,formatoSencillo.parse("02/02/2024"), null,"");
+                
+                r2.addLinReceta(lr3);
+                r2.addLinReceta(lr4);
+                r2.addLinReceta(lr5);
+        
+                Date fecha3 = formatoSencillo.parse("20/01/2024");  
+                Receta r3 = new Receta("R010","P010",fecha3);
+                
+                LinReceta lr6 = new LinReceta("R010",1,"M003",3,formatoSencillo.parse("28/01/2024"), formatoSencillo.parse("02/02/2024"),"r3-yyy");
+                
+                r3.addLinReceta(lr6);
+        
+        //Los guardamos en la base-datos
+                db.store(r1);
+                db.store(r2);
+                db.store(r3);
+          
+           } catch (ParseException ex) {
+               Logger.getLogger(Medicacion.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        
+        // ahora vamos a mostrarlos, primero las recetas 
+        Receta r = new Receta();
+        ObjectSet<Receta> result3= db.queryByExample(r);
+        while (result3.hasNext()) {
+             System.out.println(result3.next());
+        }
+ 
+        //cerramos base-datos
+        db.close();
+        System.out.println("Cerramos la base-datos");
+    } //de public void IniciaBaseDatos
     
+       
+       
+       
+       
+       
+       
+       
     
        public static void RecorreBaseDatos(int opcionElegida){
         //Conectamos con la base de datos
@@ -99,7 +169,11 @@ public class Medicacion {
                         System.out.println(resultMed.next());
                     }
                     break;
-            case 3: 
+            case 3:  Receta r = new Receta();
+                    ObjectSet<Receta> resultRec = db.queryByExample(r);
+                    while (resultRec.hasNext()) {
+                        System.out.println(resultRec.next());
+                    }
                     break;
         }
         
@@ -135,26 +209,22 @@ public class Medicacion {
             opcionElegida = entrada.nextInt();
             
             switch (opcionElegida){
-                case 1: //La comentamos para que no los genere más 
-                        //IniciaBaseDatos();
+                case 1: //Presenta pacientes
                         RecorreBaseDatos(1);
                         System.out.println("Actuamos sobre Pacientes. ");
-                        //int edadTopeJefe = entrada.nextInt();
-                        //VerJefesMayores(edadTopeJefe);
                         break;
-                case 2: //RecorreBaseDatos();
+                case 2: //Pressenta medicamentos
                         System.out.println("Actuamos sobre Medicamentos.");
                        // int edadCorrecta = entrada.nextInt();
                         //PonerEdadCorrecta(edadCorrecta);
                         RecorreBaseDatos(2);
                         break;
-                case 3: 
+                case 3: //Presenta Recetas
                         System.out.println("Opción de Recetas.");
-                       // int aniosTope = entrada.nextInt();
-                        //BorrarJefesAntiguedad(aniosTope);
                         RecorreBaseDatos(3);
                         break;
-                case 4: 
+                case 4: //Aqui cargamos (lo usamos una vez) 
+                        // IniciaRecetasBaseDatos();
                         break;
                 case 5: opcionFinalizar = true;
                         System.out.println("Salimos del programa. Gracias.");
