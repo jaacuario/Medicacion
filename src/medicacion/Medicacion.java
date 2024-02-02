@@ -7,6 +7,8 @@ package medicacion;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
+import com.db4o.query.Constraint;
+import com.db4o.query.Query;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -157,6 +159,13 @@ public class Medicacion {
         
         
         switch (opcionElegida){
+            case 0: LinReceta lr = new LinReceta();
+                    ObjectSet<LinReceta> resultLinRec = db.queryByExample(lr);  
+                    while (resultLinRec.hasNext()) {
+                        System.out.println(resultLinRec.next());
+                    }
+                    break;
+                    
             case 1: Paciente p = new Paciente();
                     ObjectSet<Paciente> resultPac = db.queryByExample(p);  
                     while (resultPac.hasNext()) {
@@ -174,6 +183,48 @@ public class Medicacion {
                     while (resultRec.hasNext()) {
                         System.out.println(resultRec.next());
                     }
+                    break;
+            case 4:  Receta r2 = new Receta();
+                    ObjectSet<Receta> resultRec2 = db.queryByExample(r2);
+                    while (resultRec2.hasNext()) {
+                        //Imprimimos la cabecera de la receta
+                        System.out.println("ResultRec2 de recetas, TODAS: "+resultRec2.toString());
+                        //Obtenemos el identificador de esa receta...
+                        // para imprimir sus lineas de receta...
+                       // Receta estaReceta = resultRec2.next();
+                        
+                        //String queIdRecetaTiene = resultRec2.next().getIdReceta();
+                        int cuantos = resultRec2.size();
+                        for(int i = 0; i < cuantos-1; i++){
+                            Receta queRecetaCoge = resultRec2.get(i);
+                            System.out.println("La receta: "+queRecetaCoge.toString());
+                            String queIdTieneLaReceta = queRecetaCoge.getIdReceta();
+                            System.out.println("El identifik de recetita: "+queIdTieneLaReceta);
+                            
+                        
+                             Query q = db.query();
+                            q.constrain(LinReceta.class);
+                            //Constraint constrain = q.descend("idQReceta").constrain(queReceta).equal();
+                            //q.descend("idQReceta").constrain(queReceta).equal();
+                            q.descend("idQReceta").constrain(queIdTieneLaReceta).equal();
+                            ObjectSet resultfinal = q.execute();
+                            System.out.println("Justo tras el q.execute... y antes del while");
+                            
+                            
+                             while(resultfinal.hasNext()){
+                                System.out.println(resultfinal.next());
+                                System.out.println("xxxx----xxxxx");
+                                System.out.println(resultfinal.toString());
+                            } //del while (resultfinal.hasNext(), que es el de LineaRecetas
+                        
+                            System.out.println("Otra receta de aquí para abajo...");
+                            
+                        } // del for()
+                        
+                        
+                        
+                    } //del while (resultRec2.Next(), que es el de las Recetas
+                
                     break;
         }
         
@@ -198,17 +249,21 @@ public class Medicacion {
         Scanner entrada = new Scanner(System.in);
     
         while(!opcionFinalizar){
-            System.out.println("Está Vd. en BASE DATOS MEDICAMENTOS en Versión 00 (30-01-24)");
+            System.out.println("Está Vd. en BASE DATOS MEDICAMENTOS en Versión 01 (02-02-2024)");
+            System.out.println("0. Ver  solo las líneas-de-recetas.");
             System.out.println("1. Ver los pacientes.");
             System.out.println("2. Ver los medicamentos.");
-            System.out.println("3. Ver las recetas.");
-            System.out.println("4. Otros.");
+            System.out.println("3. Ver las recetas, solo Recetas.");
+            System.out.println("4. Ver Recetas con Línea-de-Recetas.");
             System.out.println("5. Salir.");
         
             System.out.println("Elija su opción.");
             opcionElegida = entrada.nextInt();
             
             switch (opcionElegida){
+                case 0: RecorreBaseDatos(0);
+                       System.out.println("Actuamos sobre Linea-de-Recetas. ");          
+                       break;
                 case 1: //Presenta pacientes
                         RecorreBaseDatos(1);
                         System.out.println("Actuamos sobre Pacientes. ");
@@ -220,11 +275,13 @@ public class Medicacion {
                         RecorreBaseDatos(2);
                         break;
                 case 3: //Presenta Recetas
-                        System.out.println("Opción de Recetas.");
+                        System.out.println("Opción de Recetas, solo Recetas.");
                         RecorreBaseDatos(3);
                         break;
                 case 4: //Aqui cargamos (lo usamos una vez) 
                         // IniciaRecetasBaseDatos();
+                        System.out.println("Opción de Recetas, con Linea-de-Recetas.");
+                        RecorreBaseDatos(4);
                         break;
                 case 5: opcionFinalizar = true;
                         System.out.println("Salimos del programa. Gracias.");
