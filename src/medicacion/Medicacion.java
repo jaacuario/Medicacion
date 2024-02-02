@@ -72,10 +72,6 @@ public class Medicacion {
              System.out.println(result1.next());
         }
  
-        
-        
-        
-        
         //cerramos base-datos
         db.close();
         System.out.println("Cerramos la base-datos");
@@ -84,11 +80,35 @@ public class Medicacion {
  
     
     
-    
-    
-    
-    
-    
+       public static void RecorreBaseDatos(int opcionElegida){
+        //Conectamos con la base de datos
+        System.out.println("recorremos la BaseDatos db4Object, para visualizarla.");
+        ObjectContainer db = Db4oEmbedded.openFile(".\\src\\bd\\pacientesmedicamentos.db4o");
+        
+        
+        switch (opcionElegida){
+            case 1: Paciente p = new Paciente();
+                    ObjectSet<Paciente> resultPac = db.queryByExample(p);  
+                    while (resultPac.hasNext()) {
+                        System.out.println(resultPac.next());
+                    }
+                     break;
+            case 2: Medicamento m = new Medicamento();
+                    ObjectSet<Medicamento> resultMed = db.queryByExample(m);
+                    while (resultMed.hasNext()) {
+                        System.out.println(resultMed.next());
+                    }
+                    break;
+            case 3: 
+                    break;
+        }
+        
+        
+        //cerramos base-datos
+        db.close();
+        System.out.println("Cerramos la base-datos");
+        
+    }
     
     
     
@@ -117,7 +137,7 @@ public class Medicacion {
             switch (opcionElegida){
                 case 1: //La comentamos para que no los genere más 
                         //IniciaBaseDatos();
-                        //RecorreBaseDatos();
+                        RecorreBaseDatos(1);
                         System.out.println("Actuamos sobre Pacientes. ");
                         //int edadTopeJefe = entrada.nextInt();
                         //VerJefesMayores(edadTopeJefe);
@@ -126,13 +146,13 @@ public class Medicacion {
                         System.out.println("Actuamos sobre Medicamentos.");
                        // int edadCorrecta = entrada.nextInt();
                         //PonerEdadCorrecta(edadCorrecta);
-                        //RecorreBaseDatos();
+                        RecorreBaseDatos(2);
                         break;
                 case 3: 
                         System.out.println("Opción de Recetas.");
                        // int aniosTope = entrada.nextInt();
                         //BorrarJefesAntiguedad(aniosTope);
-                        // RecorreBaseDatos();
+                        RecorreBaseDatos(3);
                         break;
                 case 4: 
                         break;
