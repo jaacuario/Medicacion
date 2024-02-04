@@ -186,23 +186,27 @@ public class Medicacion {
                     break;
             case 4:  Receta r2 = new Receta();
                     ObjectSet<Receta> resultRec2 = db.queryByExample(r2);
-                    while (resultRec2.hasNext()) {
+                    System.out.println("ResultRec2 INICIAL, con todo"+resultRec2);
+                    System.out.println("");
+                   // while (resultRec2.hasNext()) {
+                       // System.out.println("ResultRec2 dentro del while.... "+resultRec2);
+                        System.out.println("");
                         //Imprimimos la cabecera de la receta
-                        System.out.println("ResultRec2 de recetas, TODAS: "+resultRec2.toString());
-                        //Obtenemos el identificador de esa receta...
-                        // para imprimir sus lineas de receta...
-                       // Receta estaReceta = resultRec2.next();
+                        //System.out.println("ResultRec2 de recetas, TODAS: "+resultRec2.toString());
+                       // System.out.println("ResultRec2 de recetas, TODAS: "+resultRec2.next());
+                       // System.out.println("ResultRec2 de recetas, TODAS: "+resultRec2);
                         
                         //String queIdRecetaTiene = resultRec2.next().getIdReceta();
                         int cuantos = resultRec2.size();
-                        for(int i = 0; i < cuantos-1; i++){
+                        System.out.println("Las recetas son en total: "+cuantos);
+                        for(int i = 0; i < cuantos; i++){
                             Receta queRecetaCoge = resultRec2.get(i);
-                            System.out.println("La receta: "+queRecetaCoge.toString());
+                            System.out.println("La receta ACTUAL: "+queRecetaCoge.toString());
                             String queIdTieneLaReceta = queRecetaCoge.getIdReceta();
                             System.out.println("El identifik de recetita: "+queIdTieneLaReceta);
                             
                         
-                             Query q = db.query();
+                            Query q = db.query();
                             q.constrain(LinReceta.class);
                             //Constraint constrain = q.descend("idQReceta").constrain(queReceta).equal();
                             //q.descend("idQReceta").constrain(queReceta).equal();
@@ -213,17 +217,17 @@ public class Medicacion {
                             
                              while(resultfinal.hasNext()){
                                 System.out.println(resultfinal.next());
-                                System.out.println("xxxx----xxxxx");
-                                System.out.println(resultfinal.toString());
+                                System.out.println("xxxx--Otra línea--xxxxx");
+                               // System.out.println(resultfinal.toString());
                             } //del while (resultfinal.hasNext(), que es el de LineaRecetas
                         
                             System.out.println("Otra receta de aquí para abajo...");
                             
                         } // del for()
                         
+                    //   resultRec2.next();
                         
-                        
-                    } //del while (resultRec2.Next(), que es el de las Recetas
+                  //  } //del while (resultRec2.Next(), que es el de las Recetas
                 
                     break;
         }
